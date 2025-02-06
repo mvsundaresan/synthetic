@@ -78,3 +78,9 @@ To address these challenges, we examine the limitations of existing detection te
 ### **Abstract Summary**  
 
 The rise of AI-generated voice technology has made it difficult to distinguish real human speech from deepfake audio, leading to risks such as fraud, impersonation, and misinformation. Current detection methods struggle to keep up, as they lack robustness and fail in real-world scenarios. This study explores the limitations of existing approaches and demonstrates how foundation models—trained on large-scale diverse speech data—offer better generalization. Additionally, fine-tuning techniques are examined to improve detection accuracy, making AI-powered solutions more effective for telecom security and beyond.
+
+Conclusion Summary
+Our solution effectively detects AI-generated speech, performing on par with top commercial systems. Unlike traditional methods, our approach generalizes well to real-world deepfake threats, especially in telecom scams. Fine-tuning further enhances accuracy, making it adaptable for telecom security. Continuous innovation is needed to keep pace with evolving deepfake technology, ensuring robust protection for voice networks and users.
+
+
+
