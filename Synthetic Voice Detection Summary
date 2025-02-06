@@ -1,0 +1,66 @@
+Problem Statement: 
+
+Recent advances in Text-to-Speech (TTS) and Voice-Conversion (VC) using Generative Artificial Intelligence (GenAI) technology have made it possible to generate high-quality and realistic human-like audio. This introduces significant challenges to distinguishing AI-synthesized speech from the authentic human voice and could
+raise potential issues of misuse for malicious purposes such as impersonation and fraud, spreading misinformation, deepfakes, and scams. However, existing
+detection techniques for AI-synthesized audio have not kept pace and often exhibit poor generalization across diverse datasets. 
+
+For example, a deep fake AI voice of the US President Joe Biden was recently utilized in robocalls to advise them against voting1, demonstrating how deepfakes can significantly manipulate public opinions and influence presidential elections. In response to such risks, the US Federal Communications Commission (FCC) now deems
+robot calls for election as illegal, which underscores the urgent need for enhanced detection of AI-synthesized audio.
++ https://www.cnn.com/2024/01/22/politics/fake-joe-biden-robocall/index.html 
+
+Existing Detection Methods: 
+
+Reliable detection of speech spoofing can help mitigate such risks and is therefore an active area of research. However, since the technology to create audio deepfakes has only been available for a few years (2015/16), audio spoof detection is still in its infancy. 
+
+While researchers have presented various deep learning models for audio spoofs detection, it is often unclear exactly why these architectures are successful: Preprocessing steps, hyperparameter settings, and the degree of fine-tuning are not consistent across related work. Which factors contribute to success, and which are accidental?
+
+Furthermore, the evaluation of spoof detection models has so far been performed exclusively on the ASVspoof dataset, which means that the reported performance of these models is based on a limited set of TTS synthesis algorithms. ASVspoof is based on the VCTK dataset, which exclusively features professional speakers and has been recorded in a studio environment, using a semi-anechoic chamber. What can we expect from audio spoof detection trained on this dataset? Is it capable of detecting realistic, unseen, ‘in-the-wild’ audio spoofs like those encountered on social media?
+
+The Gap: 
+
+While TTS models are advancing rapidly, AI-synthesized audio detection techniques are not keeping pace. 
+- First, previous studies have highlighted the lack of generalization and robustness in these detection methods. 
+- Second, existing detection models often take advantage of different audio features and evaluation datasets, complicating the comparison of their detection effectiveness. 
+- Third, a comprehensive evaluation to determine the effectiveness of these detection methods against the latest TTS models has not been conducted. 
+
+This gap in research leaves a significant challenge in developing reliable detection techniques that can effectively counter the growing sophistication of AI-generated audio.
+
+Finetuning Audio Foundation Models:
+
+Through extensive experiments, we reveal the generalization limitations of existing detection methods and demonstrate that foundation models exhibit
+stronger generalization capabilities, which can be attributed to their model size and the scale and quality of pretraining data. 
+
+For foundation models, which includes 
+(1) Wave2Vec2, which is pre-trained on 53k hours of unlabeled speech data. 
+(2) Wave2Vec2BERT, which is pre-trained on 4.5M hours of unlabeled speech data covering more than 143 languages. 
+(3) HuBERT, which is pretrained-on 60k hours of speech data. 
+(4) CLAP, who is trained on a variety of audio-text pairs. 
+(5) Whisper-small, and (6) Whisper-large. Both Whispers are pre-trained on 680K hours of speech data covering 96 languages.
+
+Additionally, we explore the effectiveness and efficiency of few-shot fine-tuning in improving generalization, highlighting its potential for tailored applications, such as personalized detection systems for specific entities or individuals. 
+
+Datasets: 
+
+Public datasets for training and testing. We consider three benchmark datasets for deepfake audio detection model training and testing as they are commonly used in the literature. 
+
+Wavefake collects deepfake audios from six vocoder architectures, including MelGAN, FullBandMelGAN, MultiBand-MelGAN, HiFi-GAN, Parallel WaveGAN, and WaveGlow. It consists of approximately 196 hours of generated audio files derived from the LJSPEECH dataset. 
+
+Similar to wavefake, LibriSeVoc collects deepfake audios from six state-of-the-art neural vocoders including WaveNet, WaveRNN, Mel-GAN, Parallel WaveGAN, WaveGrad  and DiffWave to generate speech samples derived from the widely used LibriTTS speech corpus, which is often utilized in text-to-speech research. Specifically, it consists of a total of 208.74 hours of synthesized samples. 
+
+In-the-wild comprises genuine and deepfake audio recordings of 58 politicians and other public figures gathered from publicly accessible sources, including social networks and video streaming platforms. 
+
+For LibriSeVoc, we follow the official train-validation-test splits, which are approximately 60%, 20%, and 20%, respectively. For Wavefake, we partition the data generated by each vocoder into training, validation, and testing subsets at ratios of 70%, 10%, and 20%, respectively. To address the class imbalance and mitigate potential evaluation bias, we further downsample LibriSeVoc and WaveFake test datasets, and In-the-Wild datasets, resulting in a balanced dataset with a real-to-fake ratio of 1:1.
+
+Evaluation metrics: 
+To provide a comprehensive evaluation of the detection performance of audio deepfake models, we adopt (1) Equal Error Rate (EER), which is defined as the point on the ROC curve, where the false positive rate (FPR) and false negative rate (FNR) are equal and is commonly used to assess the performance of binary classifications tasks, with lower values indicating better detection performance. (2) Accuracy evaluates the overall correctness of the detection model’s
+predictions and is defined as the ratio of correctly predicted data to the total data. To ensure consistency with the EER and provide more intuitive results, we set the threshold for accuracy at the EER point, meaning the accuracy reflects the model’s performance when the FPR equals the FNR. (3) AUROC (Area Under the Receiver Operating Characteristic) provides a measure of the model’s ability to distinguish between classes across different decision thresholds, providing a more comprehensive view of its discriminative power across varying conditions. An AUROC score of 1.0 indicates perfect classification, while a score of 0.5 indicates performance no better than random guessing.
+
+
+We first train all models on Wavefake training dataset and then evaluate the models on its own test set, LibriSeVoc test set, and In-the-wild dataset. Particularly,
+we make the following interesting observations. Speech foundation models exhibit stronger generalizability. As shown in Table 2, when evaluated on the test set of Wavefake, all models demonstrate near-perfect performance across the three metrics. This can be attributed to the similarity between the test set and the training data. However, when tested on the LibriSeVoc and In-the-wild datasets, models such as LFCC-LCNN, Spec.+ResNet, RawNet2, RawGATST, and AASIST struggle to generalize effectively. This performance gap indicates significant overfitting to the training data, despite these models being specifically designed for audio deepfake detection tasks. In contrast, speech foundation models consistently display stronger generalizability. Notably, Wave2Vec2BERT achieves the highest generalizability, which may be attributed to its large-scale and diverse pretraining data. Pretrained on 4.5 million hours of unlabeled audio in more than 143 languages, Wave2Vec2BERT benefits from both scale and diversity. This suggests that a well-designed self-supervised model trained on diverse speech data can extract  general and discriminative features, making it more applicable across different datasets for audio deepfake detection. It is important to note that CLAP, unlike other speech foundation models, does not generalize well across datasets. This is likely due to its primary focus on environmental audio data during pretraining, resulting in the extraction of irrelevant features for speech audio. This observation underscores that not all foundation models are equally suited for audio deepfake detection tasks.
+
+It is still challenging for detection models to correctly classify synthesized audio samples, especially those generated by the most advanced TTS service providers. While Wave2Vec2BERT achieves an overall average accuracy of 0.8989, it only reaches 0.6017 on Seed-TTS and 0.7833 on OpenAI. This highlights a huge gap between the rapid evolution of TTS technologies and the effectiveness of current audio deepfake detection methods, emphasizing the urgent need for the development of more robust and reliable detection algorithms.
+
+On the effectiveness and efficiency of few-shot fine-tuning to improve generalization Despite the challenges in generalizing across different datasets, we investigate whether there exist efficient solutions that can enhance models’ detection performance on those challenging subsets from SONAR dataset. To this end, we conduct a case study on Wave2Vec2BERT and HuBERT, as these models perform relatively poorly on the OpenAI and SeedTTS datasets but demonstrate competitive performance on other subsets. Specifically, we generate 100 additional fake audio samples using the OpenAI TTS API and randomly select another 100 fake audio samples from the SeedTTS test set for few-shot fine-tuning. Our study yields several interesting findings. These findings suggest that the effectiveness of few-shot fine-tuning may depend on the specific characteristics of the dataset. Moreover, this also highlights its potential for tailored applications, such as personalized detection systems for a specific entity or individual, to enable more customized and practical applications.
+
+AI-synthetized audio detection methods must be evaluated on diverse and advanced benchmarks. In our evaluation using the proposed dataset, most models perform well on standard TTS tools but suffer significant degradation when tested on the fake audios generated by the most advanced tool such as Voice Engine released by OpenAI. Therefore, we advocate for future research in audio deepfake detection to prioritize benchmarking against the latest and most advanced TTS technologies, which will lead to more robust and reliable detectors, as relying on high detection rates from outdated tools may create a false sense of generalization. Additionally, there is an urgent need to develop larger-scale training datasets comprising fake audio generated by cutting-edge TTS models to keep pace with rapid advancements in TTS technology and mitigate associated risks.
