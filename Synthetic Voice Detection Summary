@@ -75,4 +75,6 @@ However, existing methods for detecting AI-generated audio have not kept pace wi
 
 To address these challenges, we examine the limitations of existing detection techniques and explore the potential of foundation models—large AI models trained on vast amounts of audio data—to improve generalization. Our study evaluates models such as Wave2Vec2, HuBERT, CLAP, and Whisper, demonstrating their ability to enhance detection accuracy. We also investigate few-shot fine-tuning, which allows these models to adapt more effectively to new and evolving synthetic voices. Our findings highlight the need for advanced, scalable detection solutions to keep up with the growing sophistication of AI-generated speech.
 
+### **Abstract Summary**  
 
+The rise of AI-generated voice technology has made it difficult to distinguish real human speech from deepfake audio, leading to risks such as fraud, impersonation, and misinformation. Current detection methods struggle to keep up, as they lack robustness and fail in real-world scenarios. This study explores the limitations of existing approaches and demonstrates how foundation models—trained on large-scale diverse speech data—offer better generalization. Additionally, fine-tuning techniques are examined to improve detection accuracy, making AI-powered solutions more effective for telecom security and beyond.
