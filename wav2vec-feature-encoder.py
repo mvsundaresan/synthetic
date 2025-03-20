@@ -1,124 +1,29 @@
-Wav2vec Feat Encoder
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93
-94
-95
 import torch
 import torch.nn as nn
-import torchaudio
+import librosa
+import librosa.display
+import numpy as np
 import matplotlib.pyplot as plt
 
 # Load a .wav file and visualize the waveform
 def load_audio(file_path):
-    waveform, sample_rate = torchaudio.load(file_path)  # Load waveform
-    waveform = waveform.mean(dim=0, keepdim=True)  # Convert to mono (if stereo)
+    waveform, sample_rate = librosa.load(file_path, sr=8000)  # Load waveform
     
     # Normalize waveform
-    waveform = waveform / torch.max(torch.abs(waveform))
+    waveform = waveform / np.max(np.abs(waveform))
     
     print(f"Loaded Audio: {file_path}, Sample Rate: {sample_rate}, Shape: {waveform.shape}")
     
     # Plot the waveform
     plt.figure(figsize=(10, 4))
-    plt.plot(waveform.numpy().squeeze(), label="Raw Audio")
+    librosa.display.waveshow(waveform, sr=sample_rate)
     plt.title("Original Audio Waveform")
     plt.xlabel("Time Steps")
     plt.ylabel("Amplitude")
     plt.legend()
     plt.show()
     
-    return waveform, sample_rate
+    return torch.tensor(waveform, dtype=torch.float32).unsqueeze(0), sample_rate
 
 # Define the Wave2Vec Feature Encoder (CNN)
 class Wave2VecFeatureEncoder(nn.Module):
@@ -186,7 +91,5 @@ def process_audio(file_path):
 
 # Run the model on a sample .wav file
 if __name__ == "__main__":
-    file_path = "sample.wav"  # Replace with your actual .wav file path
+    file_path = "../sample_audio/voices/sundar/F_1_Sundar.wav"  # Replace with your actual .wav file path
     process_audio(file_path)
-
-
